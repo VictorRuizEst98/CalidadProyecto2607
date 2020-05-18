@@ -24,7 +24,7 @@
  *    \ingroup	ticket
  *    \brief    List page for tickets
  */
-
+define(ticket,ticket,false)
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
@@ -36,7 +36,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("ticket", "companies", "other", "projects"));
+$langs->loadLangs(array(ticket, "companies", "other", "projects"));
 
 
 // Get parameters
@@ -320,7 +320,7 @@ if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
         $head = societe_prepare_head($socstat);
 		$object = $tmpobject;
 
-        dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), -1, 'company');
+        dol_fiche_head($head, ticket, $langs->trans("ThirdParty"), -1, 'company');
 
         dol_banner_tab($socstat, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
@@ -376,7 +376,7 @@ if ($projectid > 0 || $project_ref) {
         //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
         $head = project_prepare_head($projectstat);
-        dol_fiche_head($head, 'ticket', $langs->trans("Project"), -1, ($projectstat->public ? 'projectpub' : 'project'));
+        dol_fiche_head($head, ticket, $langs->trans("Project"), -1, ($projectstat->public ? 'projectpub' : 'project'));
 
         // Project card
 
@@ -467,7 +467,7 @@ if ($projectid) print '<input type="hidden" name="projectid" value="'.$projectid
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/ticket/card.php?action=create'.($socid ? '&socid='.$socid : '').($projectid ? '&origin=projet_project&originid='.$projectid : ''), '', !empty($user->rights->ticket->write));
 
-$picto = 'ticket';
+$picto = ticket;
 if ($socid > 0) $picto = '';
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit);
@@ -477,7 +477,7 @@ if ($mode == 'mine') {
 }
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail = "SendTicketRef";
-$modelmail = "ticket";
+$modelmail = ticket;
 $objecttmp = new Ticket($db);
 $trackid = 'tick'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
@@ -630,7 +630,7 @@ while ($i < min($num, $limit))
 	{
 		if (property_exists($obj, $key)) $object->$key = $obj->$key;
 	}
-	$langs->load("ticket");
+	$langs->load(ticket);
 
 	// Show here line of result
 	print '<tr class="oddeven">';
