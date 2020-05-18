@@ -409,7 +409,7 @@ class Documents extends DolibarrApi
 		{
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->expensereport->read && !DolibarrApiAccess::$user->rights->expensereport->read) {
+			if (!DolibarrApiAccess::$user->rights->expensereport->read) {
 				throw new RestException(401);
 			}
 
