@@ -46,7 +46,9 @@ $modBarCodeProduct='';
 
 $maxperinit=1000;
 
-
+define("SONAR", "NoBarcodeNumberingTemplateDefined");
+define("SONAR2", "product");
+define("SONAR3", "SELECT count(rowid) as nb FROM");
 /*
  * Actions
  */
@@ -86,12 +88,13 @@ if (! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
 	}
 }
 
+
 if ($action == 'initbarcodeproducts')
 {
 	if (! is_object($modBarCodeProduct))
 	{
 		$error++;
-		setEventMessages($langs->trans("NoBarcodeNumberingTemplateDefined"), null, 'errors');
+		setEventMessages($langs->trans(SONAR), null, 'errors');
 	}
 
 	if (! $error)
@@ -103,7 +106,7 @@ if ($action == 'initbarcodeproducts')
 		$nbok=0;
 		if (! empty($eraseallbarcode))
 		{
-			$sql ="UPDATE ".MAIN_DB_PREFIX."product";
+			$sql ="UPDATE ".MAIN_DB_PREFIX.SONAR2;
 			$sql.=" SET barcode = NULL";
 			$resql=$db->query($sql);
 			if ($resql)
@@ -119,7 +122,7 @@ if ($action == 'initbarcodeproducts')
 		else
 		{
 			$sql ="SELECT rowid, ref, fk_product_type";
-			$sql.=" FROM ".MAIN_DB_PREFIX."product";
+			$sql.=" FROM ".MAIN_DB_PREFIX.SONAR2;
 			$sql.=" WHERE barcode IS NULL or barcode = ''";
 			$sql.=$db->order("datec", "ASC");
 			$sql.=$db->plimit($maxperinit);
@@ -141,11 +144,13 @@ if ($action == 'initbarcodeproducts')
 						$productstatic->type=$obj->fk_product_type;
 						$nextvalue=$modBarCodeProduct->getNextValue($productstatic, '');
 
-						//print 'Set value '.$nextvalue.' to product '.$productstatic->id." ".$productstatic->ref." ".$productstatic->type."<br>\n";
+						
 						$result=$productstatic->setValueFrom('barcode', $nextvalue, '', '', 'text', '', $user, 'PRODUCT_MODIFY');
 
 						$nbtry++;
-						if ($result > 0) $nbok++;
+						if ($result > 0){ 
+							$nbok++;
+						}
 					}
 
 					$i++;
@@ -165,7 +170,7 @@ if ($action == 'initbarcodeproducts')
 
 		if (! $error)
 		{
-			//$db->rollback();
+			
 			$db->commit();
 		}
 		else
@@ -176,7 +181,6 @@ if ($action == 'initbarcodeproducts')
 
 	$action='';
 }
-
 
 
 /*
@@ -196,8 +200,7 @@ print '<br>';
 print $langs->trans("MassBarcodeInitDesc").'<br>';
 print '<br>';
 
-//print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
-//print '<br>';
+
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="mode" value="label">';
@@ -214,27 +217,29 @@ if ($conf->societe->enabled)
 	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"), '', 'title_companies');
 
 	print '<br>'."\n";
-	$sql="SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
+	$sql=SONAR3.MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
 	$resql=$db->query($sql);
 	if ($resql)
 	{
 		$obj=$db->fetch_object($resql);
 		$nbno=$obj->nb;
 	}
-	else dol_print_error($db);
-
-	$sql="SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe";
+	else{
+		 dol_print_error($db);
+	}
+	$sql=SONAR3.MAIN_DB_PREFIX."societe";
 	$resql=$db->query($sql);
 	if ($resql)
 	{
 		$obj=$db->fetch_object($resql);
 		$nbtotal=$obj->nb;
 	}
-	else dol_print_error($db);
-
+	else{
+        dol_print_error($db);
+	}
 	print $langs->trans("CurrentlyNWithoutBarCode", $nbno, $nbtotal, $langs->transnoentitiesnoconv("ThirdParties")).'<br>'."\n";
 
-	print '<br><input class="button" type="submit" id="submitformbarcodethirdpartygen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode"))?'':'disabled ').'value="'.$langs->trans("InitEmptyBarCode", $nbno).'"';
+	print '<br><input class="button" type="submit" id="submitformbarcodethirdpartygen" '.((GETPOST("selectorforbarcode"))?'':'disabled ').'value="'.$langs->trans("InitEmptyBarCode", $nbno).'"';
 	print ' title="'.dol_escape_htmltag($langs->trans("FeatureNotYetAvailable")).'" disabled';
 	print '>';
 	print '<br><br><br><br>';
@@ -257,7 +262,7 @@ if ($conf->product->enabled || $conf->product->service)
 	print '<br>'."\n";
 
 	$sql ="SELECT count(rowid) as nb, fk_product_type, datec";
-	$sql.=" FROM ".MAIN_DB_PREFIX."product";
+	$sql.=" FROM ".MAIN_DB_PREFIX.SONAR2;
 	$sql.=" WHERE barcode IS NULL OR barcode = ''";
 	$sql.=" GROUP BY fk_product_type, datec";
 	$sql.=" ORDER BY datec";
@@ -275,17 +280,19 @@ if ($conf->product->enabled || $conf->product->service)
 			$i++;
 		}
 	}
-	else dol_print_error($db);
-
-	$sql="SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product";
+	else{
+		dol_print_error($db);
+	}
+	$sql=SONAR3.MAIN_DB_PREFIX.SONAR2;
 	$resql=$db->query($sql);
 	if ($resql)
 	{
 		$obj=$db->fetch_object($resql);
 		$nbtotal=$obj->nb;
 	}
-	else dol_print_error($db);
-
+	else {
+		dol_print_error($db);
+	}
 	print $langs->trans("CurrentlyNWithoutBarCode", $nbno, $nbtotal, $langs->transnoentitiesnoconv("ProductsOrServices")).'<br>'."\n";
 
 	if (is_object($modBarCodeProduct))
@@ -298,8 +305,8 @@ if ($conf->product->enabled || $conf->product->service)
 	else
 	{
 		$disabled=1;
-		$titleno=$langs->trans("NoBarcodeNumberingTemplateDefined");
-		print '<font class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</font> (<a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>)<br>';
+		$titleno=$langs->trans(SONAR);
+		print '<font class="warning">'.$langs->trans(SONAR).'</font> (<a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>)<br>';
 	}
 	if (empty($nbno))
 	{
@@ -307,7 +314,7 @@ if ($conf->product->enabled || $conf->product->service)
 	}
 
 	print '<br>';
-	//print '<input type="checkbox" id="erasealreadyset" name="erasealreadyset"> '.$langs->trans("ResetBarcodeForAllRecords").'<br>';
+	
 	$moretags1=(($disabled||$disabled1)?' disabled title="'.dol_escape_htmltag($titleno).'"':'');
 	print '<input class="button" type="submit" name="submitformbarcodeproductgen" id="submitformbarcodeproductgen" value="'.$langs->trans("InitEmptyBarCode", min($maxperinit, $nbno)).'"'.$moretags1.'>';
 	$moretags2=(($nbno == $nbtotal)?' disabled':'');
