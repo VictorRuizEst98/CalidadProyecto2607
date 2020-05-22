@@ -24,7 +24,7 @@
  * 		\ingroup	core
  *      \brief      Page of users
  */
-
+define(alpha,alpha,false)
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->categorie->enabled)) {
@@ -47,12 +47,12 @@ if ($user->socid > 0) {
 }
 
 // Load mode employee
-$mode = GETPOST("mode", 'alpha');
+$mode = GETPOST("mode", alpha);
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', alpha);
+$sortorder = GETPOST('sortorder', alpha);
 $page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }
 $offset = $limit * $page;
@@ -124,19 +124,19 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Init search fields
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$search_user=GETPOST('search_user', 'alpha');
-$search_login=GETPOST('search_login', 'alpha');
-$search_lastname=GETPOST('search_lastname', 'alpha');
-$search_firstname=GETPOST('search_firstname', 'alpha');
-$search_gender=GETPOST('search_gender', 'alpha');
-$search_employee=GETPOST('search_employee', 'alpha');
-$search_accountancy_code=GETPOST('search_accountancy_code', 'alpha');
-$search_email=GETPOST('search_email', 'alpha');
+$search_user=GETPOST('search_user', alpha);
+$search_login=GETPOST('search_login', alpha);
+$search_lastname=GETPOST('search_lastname', alpha);
+$search_firstname=GETPOST('search_firstname', alpha);
+$search_gender=GETPOST('search_gender', alpha);
+$search_employee=GETPOST('search_employee', alpha);
+$search_accountancy_code=GETPOST('search_accountancy_code', alpha);
+$search_email=GETPOST('search_email', alpha);
 $search_api_key=GETPOST('search_api_key', 'alphanohtml');
 $search_statut=GETPOST('search_statut', 'intcomma');
-$search_thirdparty=GETPOST('search_thirdparty', 'alpha');
+$search_thirdparty=GETPOST('search_thirdparty', alpha);
 $search_supervisor=GETPOST('search_supervisor', 'intcomma');
-$optioncss = GETPOST('optioncss', 'alpha');
+$optioncss = GETPOST('optioncss', alpha);
 $search_categ = GETPOST("search_categ", 'int');
 $catid = GETPOST('catid', 'int');
 
@@ -150,8 +150,8 @@ if ($mode == 'employee' && ! GETPOSTISSET('search_employee')) $search_employee=1
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction = ''; }
+if (GETPOST('cancel', alpha)) { $action = 'list'; $massaction = ''; }
+if (!GETPOST('confirmmassaction', alpha) && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction = ''; }
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters); // Note that $action and $object may have been modified by some hooks
@@ -163,7 +163,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+	if (GETPOST('button_removefilter_x', alpha) || GETPOST('button_removefilter.x', alpha) || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 	{
 		$search_user = "";
 		$search_login = "";
