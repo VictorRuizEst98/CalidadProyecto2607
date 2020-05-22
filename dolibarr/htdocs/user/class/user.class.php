@@ -740,7 +740,8 @@ class User extends CommonObject
 				else
 				{
 					$wherefordel = "module='".$this->db->escape($allmodule)."'";
-					if (!empty($allperms))  $whereforadd .= " AND perms='".$this->db->escape($allperms)."'";
+					if (!empty($allperms)) {" AND perms='".$this->db->escape($allperms)."'";
+							       }
 				}
 			}
 		}
@@ -1854,6 +1855,9 @@ class User extends CommonObject
 	 *	@param	int		$nosyncmember	        Do not synchronize linked member
 	 *  @return string 			          		If OK return clear password, 0 if no change, < 0 if error
 	 */
+}
+class User1 extends CommonObject
+{
 	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0)
 	{
 		global $conf, $langs;
@@ -2753,6 +2757,9 @@ class User extends CommonObject
 	 *  @param  int		$id     Id of user to load
 	 *  @return	void
 	 */
+}
+class User extends CommonObject
+{
 	public function info($id)
 	{
 		$sql = "SELECT u.rowid, u.login as ref, u.datec,";
