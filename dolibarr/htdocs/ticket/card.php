@@ -21,7 +21,7 @@
  *    \file     htdocs/ticket/card.php
  *    \ingroup 	ticket
  */
-
+define(ticket,ticket,false)
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
@@ -42,7 +42,7 @@ if (!empty($conf->contrat->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "other", "ticket"));
+$langs->loadLangs(array("companies", "other", ticket));
 
 // Get parameters
 $id        = GETPOST('id', 'int');
@@ -98,7 +98,7 @@ $url_page_current = DOL_URL_ROOT.'/ticket/card.php';
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-$result = restrictedArea($user, 'ticket', $object->id);
+$result = restrictedArea($user, ticket, $object->id);
 
 $triggermodname = 'TICKET_MODIFY';
 $permissiontoadd = $user->rights->ticket->write;
@@ -621,7 +621,7 @@ if ($action == 'create' || $action == 'presend')
 {
     $formticket = new FormTicket($db);
 
-    print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
+    print load_fiche_titre($langs->trans('NewTicket'), '', ticket);
 
     $formticket->withfromsocid = $socid ? $socid : $user->socid;
     $formticket->withfromcontactid = $contactid ? $contactid : '';
@@ -685,7 +685,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
                 //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
                 $head = project_prepare_head($projectstat);
-                dol_fiche_head($head, 'ticket', $langs->trans("Project"), 0, ($projectstat->public ? 'projectpub' : 'project'));
+                dol_fiche_head($head, ticket, $langs->trans("Project"), 0, ($projectstat->public ? 'projectpub' : 'project'));
 
                 /*
                  *   Projet synthese pour rappel
@@ -741,7 +741,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             $object->fetch_thirdparty();
             $head = societe_prepare_head($object->thirdparty);
 
-            dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
+            dol_fiche_head($head, ticket, $langs->trans("ThirdParty"), 0, 'company');
             dol_banner_tab($object->thirdparty, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
             dol_fiche_end();
         }
@@ -754,7 +754,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
         $head = ticket_prepare_head($object);
 
-        dol_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket');
+        dol_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, ticket);
 
         $morehtmlref = '<div class="refidno">';
         $morehtmlref .= $object->subject;
@@ -1217,7 +1217,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			print '<a name="builddoc"></a>'; // ancre
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, array('ticket'));
+			$linktoelem = $form->showLinkToObjectBlock($object, null, array(ticket));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			// Show direct link to public interface
@@ -1229,7 +1229,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'ticket', $socid, 1);
+			$somethingshown = $formactions->showactions($object, ticket, $socid, 1);
 
 			print '</div></div></div>';
 		}
