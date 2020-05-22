@@ -961,6 +961,7 @@ if ($mode == 'marketplace')
 	        </div>
 	        <div id="listing-content">
 	            <table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
+			<th scope = "Modificacion">AñadidoParaSonar</th>
 	                <tbody id="listOfModules">
 	                    <?php echo $dolistore->get_products($categorie); ?>
 	                </tbody>
