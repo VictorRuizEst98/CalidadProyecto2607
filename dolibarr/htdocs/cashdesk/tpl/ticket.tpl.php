@@ -37,7 +37,8 @@ $object=new Facture($db);
 $object->fetch($facid);
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="es">
     <head>
     <title><?php echo $langs->trans('PrintTicket') ?></title>
     <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT;?>/cashdesk/css/ticket.css">
@@ -66,13 +67,14 @@ $object->fetch($facid);
 <br>
 
 <table class="liste_articles">
+    <caption>Lista de articulos</caption>
     <thead>
 	<tr class="titres">
-            <th><?php print $langs->trans("Code"); ?></th>
-            <th><?php print $langs->trans("Label"); ?></th>
-            <th><?php print $langs->trans("Qty"); ?></th>
-            <th><?php print $langs->trans("Discount").' (%)'; ?></th>
-            <th><?php print $langs->trans("TotalHT"); ?></th>
+            <th scope = "col"><?php print $langs->trans("Code"); ?></th>
+            <th scope = "col"><?php print $langs->trans("Label"); ?></th>
+            <th scope = "col"><?php print $langs->trans("Qty"); ?></th>
+            <th scope = "col"><?php print $langs->trans("Discount").' (%)'; ?></th>
+            <th scope = "col"><?php print $langs->trans("TotalHT"); ?></th>
 	</tr>
     </thead>
     <tbody>
@@ -100,15 +102,16 @@ $object->fetch($facid);
 </table>
 
 <table class="totaux">
+<caption>totaux</caption>
 <tr>
-    <th class="nowrap"><?php echo $langs->trans("TotalHT");?></th>
+    <th class="nowrap" scope = "col"><?php echo $langs->trans("TotalHT");?></th>
     <td class="nowrap"><?php echo price(price2num($obj_facturation->prixTotalHt(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n";?></td>
 </tr>
 <tr>
-    <th class="nowrap"><?php echo $langs->trans("TotalVAT").'</th><td class="nowrap">'.price(price2num($obj_facturation->montantTva(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n";?></td>
+    <th class="nowrap" scope = "col"><?php echo $langs->trans("TotalVAT").'</th><td class="nowrap">'.price(price2num($obj_facturation->montantTva(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n";?></td>
 </tr>
 <tr>
-    <th class="nowrap"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="nowrap">'.price(price2num($obj_facturation->prixTotalTtc(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n";?></td>
+    <th class="nowrap" scope = "col"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="nowrap">'.price(price2num($obj_facturation->prixTotalTtc(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n";?></td>
 </tr>
 </table>
 
