@@ -196,10 +196,11 @@ $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.pcg_subtype, aa.acco
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND aa.entity = ".$conf->entity;
-if ($db->type == 'pgsql') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".$conf->entity;
-else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".$conf->entity;
+if ($db->type == 'pgsql'){
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".$conf->entity;
+}	
 $sql .= " WHERE asy.rowid = ".$pcgver;
-//print $sql;
+
 if (strlen(trim($search_account))) {
 	$lengthpaddingaccount = 0;
 	if ($conf->global->ACCOUNTING_LENGTH_GACCOUNT || $conf->global->ACCOUNTING_LENGTH_AACCOUNT) {
@@ -263,16 +264,32 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
     $param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-	if ($search_account) $param .= '&search_account='.urlencode($search_account);
-	if ($search_label) $param .= '&search_label='.urlencode($search_label);
-	if ($search_accountparent > 0 || $search_accountparent == '0') $param .= '&search_accountparent='.urlencode($search_accountparent);
-	if ($search_pcgtype) $param .= '&search_pcgtype='.urlencode($search_pcgtype);
-	if ($search_pcgsubtype) $param .= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
-    if ($optioncss != '') $param .= '&optioncss='.$optioncss;
-
-    if (!empty($conf->use_javascript_ajax))
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]){
+		$param .= '&contextpage='.$contextpage;
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit){
+		$param .= '&limit='.$limit;
+	}
+	if ($search_account) {
+		$param .= '&search_account='.urlencode($search_account);
+	}
+	if ($search_label){
+		$param .= '&search_label='.urlencode($search_label);
+	}
+	if ($search_accountparent > 0 || $search_accountparent == '0'){
+		$param .= '&search_accountparent='.urlencode($search_accountparent);
+	}
+	if ($search_pcgtype){
+		$param .= '&search_pcgtype='.urlencode($search_pcgtype);
+	}
+	if ($search_pcgsubtype){
+		$param .= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
+	}
+    if ($optioncss != '') {
+		$param .= '&optioncss='.$optioncss;
+	}
+	
+	if (!empty($conf->use_javascript_ajax))
     {
 	    print '<!-- Add javascript to reload page when we click "Change plan" -->
 			<script type="text/javascript">
@@ -287,7 +304,9 @@ if ($resql)
     }
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
