@@ -64,7 +64,12 @@ if (!empty($hookmanager->resPrint)) {
 
 // IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+          <title>Titulo de pagina</title> //editable
+          <meta content="text/html; charset=utf-8" />
+</head>  
 <body>
 <style>
 .right {
