@@ -46,7 +46,7 @@ require '../../../../main.inc.php';
  *
  * Page used to create new folders in the current folder.
 -->
-<html>
+<html lang = "es">
 	<head>
 		<title>Create Folder</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -121,10 +121,14 @@ window.onload = function()
 	</head>
 	<body>
 		<table class="fullHeight" cellSpacing="0" cellPadding="0" width="100%" border="0">
+			<caption>AñadidoParaSonar</caption>
+			<th id = "ejemplo">Hola</th>
 			<tr>
 				<td>
 					<button type="button" style="WIDTH: 100%" onclick="CreateFolder();">
 						<table cellSpacing="0" cellPadding="0" border="0">
+							<caption>AñadidoParaSonar</caption>
+							<th id = "ejemplo">Hola</th>
 							<tr>
 								<td><?php echo img_picto_common('', 'treemenu/folder.gif', 'width="16" height="16"'); ?></td>
 								<td>&nbsp;</td>
