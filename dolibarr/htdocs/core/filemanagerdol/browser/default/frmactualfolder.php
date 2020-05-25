@@ -46,7 +46,7 @@ require '../../../../main.inc.php';
  *
  * This page shows the actual folder path.
 -->
-<html>
+<html lang = "es">
 	<head>
 		<title>Folder path</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -99,10 +99,14 @@ window.onload = function()
 	</head>
 	<body>
 		<table class="fullHeight" cellSpacing="0" cellPadding="0" width="100%" border="0">
+			<caption>AñadidoParaSonar</caption>
+			<th id = "ejemplo">hola</th>
 			<tr>
 				<td>
 					<button style="WIDTH: 100%" type="button">
 						<table cellSpacing="0" cellPadding="0" width="100%" border="0">
+							<caption>AñadidoParaSonar</caption>
+							<th id = "ejemplo">Hola</th>
 							<tr>
 								<td><?php echo img_picto_common('', 'treemenu/folder.gif', 'width="16" height="16"'); ?></td>
 								<td>&nbsp;</td>
