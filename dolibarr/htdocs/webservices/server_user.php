@@ -399,7 +399,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
  * @param	array		$authentication		Array of authentication information
  * @return	array							Array result
  */
-function getListOfGroups($authentication)
+function getListOfGroups($authentication, $user)
 {
 	global $db, $conf, $langs;
 
@@ -478,7 +478,7 @@ function getListOfGroups($authentication)
  * @param	array		$thirdpartywithuser Datas
  * @return	mixed
  */
-function createUserFromThirdparty($authentication, $thirdpartywithuser)
+function createUserFromThirdparty($authentication, $thirdpartywithuser, $ref, $ref_ext)
 {
 	global $db, $conf, $langs;
 
@@ -691,7 +691,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
  * @param	array		$shortuser			Array of login/password info
  * @return	mixed
  */
-function setUserPassword($authentication, $shortuser)
+function setUserPassword($authentication, $shortuser, $ref, $ref_ext, $id,$arraygroups)
 {
 
 	global $db, $conf, $langs;
