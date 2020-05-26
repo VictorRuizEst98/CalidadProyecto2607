@@ -46,7 +46,7 @@ require '../../../../main.inc.php';
  *
  * Page used to upload new files in the current folder.
 -->
-<html>
+<html lang = "es">
 	<head>
 		<title>File Upload</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -123,10 +123,14 @@ window.onload = function()
 	<body>
 		<form id="frmUpload" action="" target="frmUploadWorker" method="post" enctype="multipart/form-data" onsubmit="return OnSubmit();">
 			<table class="fullHeight" cellspacing="0" cellpadding="0" width="100%" border="0">
+				<caption>AñadidoParaSonar</caption>
+				<th id = "ejemplo">AñadidoParaSonar</th>
 				<tr>
 					<td class="nowrap">
 						<span id="eUploadMessage">Upload a new file in this folder</span><br>
 						<table cellspacing="0" cellpadding="0" width="100%" border="0">
+							<caption>Ejemplo</caption>
+							<th id = "ejemplo">Hola</th>
 							<tr>
 								<td width="100%"><input id="NewFile" name="NewFile" style="WIDTH: 100%" type="file"></td>
 								<td class="nowrap">&nbsp;<input id="btnUpload" type="submit" value="Upload"></td>
