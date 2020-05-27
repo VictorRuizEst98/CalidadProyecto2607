@@ -25,11 +25,21 @@
  * \brief Execute pendings jobs
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOLOGIN'))        define('NOLOGIN', '1');
+if (! defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (! defined('NOREQUIREMENU')) {
+	 define('NOREQUIREMENU', '1');
+}
+if (! defined('NOREQUIREHTML')) {
+	 define('NOREQUIREHTML', '1');
+}
+if (! defined('NOREQUIREAJAX'))  {
+	define('NOREQUIREAJAX', '1');
+}
+if (! defined('NOLOGIN')) {
+	   define('NOLOGIN', '1');
+}
 
 
 $sapi_type = php_sapi_name();
@@ -106,8 +116,9 @@ if ($userlogin == 'firstadmin') {
 			$userlogin = $obj->login;
 			echo "First admin user found is login '" . $userlogin . "', entity " . $obj->entity . "\n";
 		}
-	} else
+	} else{
 		dol_print_error($db);
+	}
 }
 
 // Check user login
@@ -159,7 +170,7 @@ foreach ($object->lines as $val) {
 	$qualifiedjobs[] = $val;
 }
 
-// TODO Duplicate code. This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
+
 
 $nbofjobs = count($qualifiedjobs);
 $nbofjobslaunchedok = 0;
@@ -252,15 +263,16 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 
 	$conf = $savconf;
 }
-else
+else 
 {
 	echo "cron_run_jobs.php no qualified job found\n";
 }
 
 $db->close();
 
-if ($nbofjobslaunchedko)
+if ($nbofjobslaunchedko){
 	exit(1);
+}
 exit(0);
 
 /**
