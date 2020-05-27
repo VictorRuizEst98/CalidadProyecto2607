@@ -63,20 +63,24 @@ $required_fields = array($conf->global->LDAP_KEY_GROUPS,$conf->global->LDAP_GROU
 $required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 
 if (! isset($argv[1])) {
-	// print "Usage: $script_file (nocommitiferror|commitiferror) [id_group]\n";
+	
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
 	exit(- 1);
 }
 
 foreach ($argv as $key => $val) {
-	if ($val == 'commitiferror')
+	if ($val == 'commitiferror'){
 		$forcecommit = 1;
-	if (preg_match('/--server=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--server=([^\s]+)$/', $val, $reg)){
 		$conf->global->LDAP_SERVER_HOST = $reg[1];
-	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg)){
 		$excludeuser = explode(',', $reg[1]);
-	if (preg_match('/-y$/', $val, $reg))
+	}
+	if (preg_match('/-y$/', $val, $reg)){
 		$confirmed = 1;
+	}
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -131,7 +135,7 @@ if ($result >= 0) {
 			$group->note = $ldapgroup[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION];
 			$group->entity = $conf->entity;
 
-			// print_r($ldapgroup);
+			
 
 			if ($group->id > 0) { // Group update
 				print $langs->transnoentities("GroupUpdate") . ' # ' . $key . ': name=' . $group->name;
@@ -157,15 +161,16 @@ if ($result >= 0) {
 				print "\n";
 			}
 
-			// print_r($group);
+			
 
 			// Gestion des utilisateurs associés au groupe
 			// 1 - Association des utilisateurs du groupe LDAP au groupe Dolibarr
 			$userList = array();
 			$userIdList = array();
 			foreach ($ldapgroup[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] as $key => $userdn) {
-				if ($key === 'count')
+				if ($key === 'count'){
 					continue;
+				}
 				if (empty($userList[$userdn])) { // Récupération de l'utilisateur
 				                                 // Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
 					if ($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS === 'memberUid') {
@@ -174,8 +179,9 @@ if ($result >= 0) {
 						$userFilter = explode(',', $userdn);
 						$userKey = $ldap->getAttributeValues('(' . $userFilter[0] . ')', $conf->global->LDAP_KEY_USERS);
 					}
-					if (! is_array($userKey))
+					if (! is_array($userKey)){
 						continue;
+					}
 
 					$fuser = new User($db);
 
@@ -209,10 +215,11 @@ if ($result >= 0) {
 		}
 
 		if (! $error || $forcecommit) {
-			if (! $error)
+			if (! $error){
 				print $langs->transnoentities("NoErrorCommitIsDone") . "\n";
-			else
+			}else{
 				print $langs->transnoentities("ErrorButCommitIsDone") . "\n";
+			}
 			$db->commit();
 		} else {
 			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error) . "\n";

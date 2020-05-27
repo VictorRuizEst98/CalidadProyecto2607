@@ -99,10 +99,10 @@ function migrate_user_filespath($u)
 	$origin = $dir . '/' . get_exdir($u->id, 2, 0, 0, $u, 'user');
 	$destin = $dir . '/' . $u->id;
 
-	$error = 0;
+	
 
 	$origin_osencoded = dol_osencode($origin);
-	$destin_osencoded = dol_osencode($destin);
+	
 	dol_mkdir($destin);
 
 	if (dol_is_dir($origin)) {
@@ -116,7 +116,7 @@ function migrate_user_filespath($u)
 						while (($thumb = readdir($thumbs)) !== false) {
 							dol_move($origin . '/' . $file . '/' . $thumb, $destin . '/' . $file . '/' . $thumb);
 						}
-						// dol_delete_dir($origin.'/'.$file);
+						
 					}
 				} else {
 					if (dol_is_file($origin . '/' . $file)) {

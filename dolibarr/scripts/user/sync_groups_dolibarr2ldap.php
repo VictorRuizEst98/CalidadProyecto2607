@@ -55,13 +55,6 @@ $error = 0;
 print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
 dol_syslog($script_file . " launched with arg " . join(',', $argv));
 
-/*
- * if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
- * {
- * print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
- * exit(-1);
- * }
- */
 
 $sql = "SELECT rowid";
 $sql .= " FROM " . MAIN_DB_PREFIX . "usergroup";

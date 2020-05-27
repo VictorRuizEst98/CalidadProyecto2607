@@ -72,14 +72,18 @@ if (! isset($argv[1])) {
 }
 
 foreach ($argv as $key => $val) {
-	if ($val == 'commitiferror')
+	if ($val == 'commitiferror'){
 		$forcecommit = 1;
-	if (preg_match('/--server=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--server=([^\s]+)$/', $val, $reg)){
 		$conf->global->LDAP_SERVER_HOST = $reg[1];
-	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg)){
 		$excludeuser = explode(',', $reg[1]);
-	if (preg_match('/-y$/', $val, $reg))
+	}
+	if (preg_match('/-y$/', $val, $reg)){
 		$confirmed = 1;
+	}
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -91,10 +95,11 @@ print "port=" . $conf->global->LDAP_SERVER_PORT . "\n";
 print "login=" . $conf->global->LDAP_ADMIN_DN . "\n";
 print "pass=" . preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS) . "\n";
 print "DN to extract=" . $conf->global->LDAP_USER_DN . "\n";
-if (! empty($conf->global->LDAP_FILTER_CONNECTION))
+if (! empty($conf->global->LDAP_FILTER_CONNECTION)){
 	print 'Filter=(' . $conf->global->LDAP_FILTER_CONNECTION . ')' . "\n"; // Note: filter is defined into function getRecords
-else
+}else{
 	print 'Filter=(' . $conf->global->LDAP_KEY_USERS . '=*)' . "\n";
+}
 print "----- To Dolibarr database:\n";
 print "type=" . $conf->db->type . "\n";
 print "host=" . $conf->db->host . "\n";
@@ -132,7 +137,6 @@ if ($resql) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
-				// print 'Load cache for country '.strtolower($obj->label).' rowid='.$obj->rowid."\n";
 				$hashlib2rowid[strtolower($obj->label)] = $obj->rowid;
 				$countries[$obj->rowid] = array('rowid' => $obj->rowid,'label' => $obj->label,'code' => $obj->code);
 			}
@@ -179,15 +183,6 @@ if ($result >= 0) {
 			$fuser->pass = $ldapuser[$conf->global->LDAP_FIELD_PASSWORD];
 			$fuser->pass_indatabase_crypted = $ldapuser[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED];
 
-			// $user->societe;
-			/*
-			 * $fuser->address=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS];
-			 * $fuser->zip=$ldapuser[$conf->global->LDAP_FIELD_ZIP];
-			 * $fuser->town=$ldapuser[$conf->global->LDAP_FIELD_TOWN];
-			 * $fuser->country=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];
-			 * $fuser->country_id=$countries[$hashlib2rowid[strtolower($fuser->country)]]['rowid'];
-			 * $fuser->country_code=$countries[$hashlib2rowid[strtolower($fuser->country)]]['code'];
-			 */
 
 			$fuser->office_phone = $ldapuser[$conf->global->LDAP_FIELD_PHONE];
 			$fuser->user_mobile = $ldapuser[$conf->global->LDAP_FIELD_MOBILE];
@@ -203,18 +198,7 @@ if ($result >= 0) {
 			$fuser->fk_member = 0;
 
 			$fuser->statut = 1;
-			// TODO : revoir la gestion du status
-			/*
-			 * if (isset($ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS]))
-			 * {
-			 * $fuser->datec=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
-			 * $fuser->datevalid=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
-			 * $fuser->statut=$ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS];
-			 * }
-			 */
-			// if ($fuser->statut > 1) $fuser->statut=1;
-
-			// print_r($ldapuser);
+			
 
 			if ($fuser->id > 0) { // User update
 				print $langs->transnoentities("UserUpdate") . ' # ' . $key . ': login=' . $fuser->login . ', fullname=' . $fuser->getFullName($langs);
@@ -238,24 +222,14 @@ if ($result >= 0) {
 				}
 			}
 			print "\n";
-			// print_r($fuser);
-
-			// Gestion des groupes
-			// TODO : revoir la gestion des groupes (ou script de sync groupes)
-			/*
-			 * if(!$error) {
-			 * foreach ($ldapuser[$conf->global->LDAP_FIELD_USERGROUPS] as $groupdn) {
-			 * $groupdn;
-			 * }
-			 * }
-			 */
 		}
 
 		if (! $error || $forcecommit) {
-			if (! $error)
+			if (! $error){
 				print $langs->transnoentities("NoErrorCommitIsDone") . "\n";
-			else
+			}else{
 				print $langs->transnoentities("ErrorButCommitIsDone") . "\n";
+			}
 			$db->commit();
 		} else {
 			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error) . "\n";
