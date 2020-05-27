@@ -93,11 +93,9 @@ foreach ($argv as $key => $value) {
 	}
 }
 $outputlangs = $langs;
-if (! empty($newlangid)) {
-	if ($outputlangs->defaultlang != $newlangid) {
+if (! empty($newlangid) && ($outputlangs->defaultlang != $newlangid)) {	
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlangid);
-	}
 }
 
 // Load translation files required by the page
@@ -151,8 +149,9 @@ if (! empty($num) && $num != "all") {
 	$listofnum .= "'";
 	$arraynum = explode(',', $num);
 	foreach ($arraynum as $val) {
-		if ($listofnum != "'")
+		if ($listofnum != "'"){
 			$listofnum .= "','";
+		}
 		$listofnum .= $val;
 	}
 	$listofnum .= "'";
@@ -163,13 +162,15 @@ $sql .= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
 $sql .= " FROM " . MAIN_DB_PREFIX . "bank_account as ba";
 $sql .= ", " . MAIN_DB_PREFIX . "bank as b";
 $sql .= " WHERE b.fk_account = " . $acct->id;
-if ($listofnum)
+if ($listofnum){
 	$sql .= " AND b.num_releve IN (" . $listofnum . ")";
-if (! isset($num))
+}
+if (! isset($num)){
 	$sql .= " OR b.num_releve is null";
+}
 $sql .= " AND b.fk_account = ba.rowid";
 $sql .= $db->order("b.num_releve, b.datev, b.datec", "ASC"); // We add date of creation to have correct order when everything is done the same day
-                                                             // print $sql;
+
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -239,11 +240,11 @@ if ($resql) {
 		// Libelle
 		$reg = array();
 		preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthese on tente recherche de traduction
-		if ($reg[1] && $langs->transnoentitiesnoconv($reg[1]) != $reg[1])
+		if ($reg[1] && $langs->transnoentitiesnoconv($reg[1]) != $reg[1]){
 			$description = $langs->transnoentitiesnoconv($reg[1]);
-		else
+		}else{
 			$description = $objp->label;
-
+		}
 		/*
 		 * Ajout les liens (societe, company...)
 		 */
@@ -329,25 +330,6 @@ if ($resql) {
 				$thirdparty .= $links[$key]['label'];
 				$newline = 0;
 			}
-			/*
-			 * elseif ($links[$key]['type']=='sc')
-			 * {
-			 * if ($accountelem) $accountelem.= ', ';
-			 * //$accountelem.= '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
-			 * //$accountelem.= img_object($langs->transnoentitiesnoconv('ShowBill'),'bill').' ';
-			 * $accountelem.= $langs->transnoentitiesnoconv("SocialContribution");
-			 * //$accountelem.= '</a>';
-			 * $newline=0;
-			 * }
-			 * else
-			 * {
-			 * if ($accountelem) $accountelem.= ', ';
-			 * //$accountelem.= '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
-			 * $accountelem.= $links[$key]['label'];
-			 * //$accountelem.= '</a>';
-			 * $newline=0;
-			 * }
-			 */
 		}
 
 		$debit = $credit = '';
