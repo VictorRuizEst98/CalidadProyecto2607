@@ -25,10 +25,12 @@
  * \ingroup mailing
  * \brief Script d'envoi d'un mailing prepare et valide
  */
++define("UPD",'UPDATE');
++define("WHERO", "' WHERE rowid=");
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__ . '/';
-
+$UPDATE=update
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
@@ -40,11 +42,11 @@ if (! isset($argv[1]) || ! $argv[1]) {
 	exit(- 1);
 }
 $id = $argv[1];
-if (isset($argv[2]) || ! empty($argv[2]))
-	$login = $argv[2];
-else
+if (isset($argv[2]) || ! empty($argv[2])){
+	$login = $argv[2]; 
+}else{
 	$login = '';
-
+}
 require_once $path . "../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT . "/core/class/CMailFile.class.php";
 require_once DOL_DOCUMENT_ROOT . "/comm/mailing/class/mailing.class.php";
@@ -60,13 +62,13 @@ $error = 0;
 @set_time_limit(0);
 print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
 
-if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1') {}
+if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1') {
 
 $user = new User($db);
 // for signature, we use user send as parameter
-if (! empty($login))
+}if (! empty($login)){
 	$user->fetch('', $login);
-
+}
 // We get list of emailing id to process
 $sql = "SELECT m.rowid";
 $sql .= " FROM " . MAIN_DB_PREFIX . "mailing as m";
@@ -101,9 +103,9 @@ if ($resql) {
 			$errorsto = $emailing->email_errorsto;
 			// Le message est-il en html
 			$msgishtml = - 1; // Unknown by default
-			if (preg_match('/[\s\t]*<html>/i', $message))
+			if (preg_match('/[\s\t]*<html>/i', $message)){
 				$msgishtml = 1;
-
+			}
 			$nbok = 0;
 			$nbko = 0;
 
@@ -126,7 +128,7 @@ if ($resql) {
 					$now = dol_now();
 
 					// Positionne date debut envoi
-					$sqlstartdate = "UPDATE " . MAIN_DB_PREFIX . "mailing SET date_envoi='" . $db->idate($now) . "' WHERE rowid=" . $id;
+					$sqlstartdate = UPD . MAIN_DB_PREFIX . "mailing SET date_envoi='" . $db->idate($now) . WRERO . $id;
 					$resqlstartdate = $db->query($sqlstartdate);
 					if (! $resqlstartdate) {
 						dol_print_error($db);
@@ -180,12 +182,12 @@ if ($resql) {
 						$substitutionarray['__UNSUBSCRIBE__'] = '<a href="' . DOL_MAIN_URL_ROOT . '/public/emailing/mailing-unsubscribe.php?tag=' . $obj->tag . '&unsuscrib=1&securitykey=' . urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) . '" target="_blank">' . $langs->trans("MailUnsubcribe") . '</a>';
 
 						$onlinepaymentenabled = 0;
-						if (! empty($conf->paypal->enabled))
-							$onlinepaymentenabled ++;
-						if (! empty($conf->paybox->enabled))
-							$onlinepaymentenabled ++;
-						if (! empty($conf->stripe->enabled))
-							$onlinepaymentenabled ++;
+						if (! empty($conf->paypal->enabled)){
+							$onlinepaymentenabled ++; }
+						if (! empty($conf->paybox->enabled)){
+							$onlinepaymentenabled ++; }
+						if (! empty($conf->stripe->enabled)){
+							$onlinepaymentenabled ++; }
 						if ($onlinepaymentenabled && ! empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 							$substitutionarray['__SECUREKEYPAYMENT__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 							if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
@@ -204,27 +206,27 @@ if ($resql) {
 						if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
 							$substitutionarray['__SECUREKEYPAYPAL__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)){
 								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else
+							}else{
 								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $obj->source_id, 2);
-
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+							}
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)){
 								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else
+							}else{
 								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'order' . $obj->source_id, 2);
-
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+							}
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)){
 								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else
+							}else{
 								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'invoice' . $obj->source_id, 2);
-
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+							}
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)){
 								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else
+							}else{
 								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'contractline' . $obj->source_id, 2);
-						}
-
+								}
+							}
 						complete_substitutions_array($substitutionarray, $langs);
 						$newsubject = make_substitutions($subject, $substitutionarray);
 						$newmessage = make_substitutions($message, $substitutionarray);
@@ -288,8 +290,8 @@ if ($resql) {
 							 * // End call triggers
 							 */
 
-							$sqlok = "UPDATE " . MAIN_DB_PREFIX . "mailing_cibles";
-							$sqlok .= " SET statut=1, date_envoi='" . $db->idate($now) . "' WHERE rowid=" . $obj->rowid;
+							$sqlok = UPD . MAIN_DB_PREFIX . "mailing_cibles";
+							$sqlok .= " SET statut=1, date_envoi='" . $db->idate($now) . WRERO . $obj->rowid;
 							$resqlok = $db->query($sqlok);
 							if (! $resqlok) {
 								dol_print_error($db);
@@ -298,7 +300,7 @@ if ($resql) {
 								// if cheack read is use then update prospect contact status
 								if (strpos($message, '__CHECK_READ__') !== false) {
 									// Update status communication of thirdparty prospect
-									$sqlx = "UPDATE " . MAIN_DB_PREFIX . "societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM " . MAIN_DB_PREFIX . "mailing_cibles WHERE rowid=" . $obj->rowid . ")";
+									$sqlx = UPD . MAIN_DB_PREFIX . "societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM " . MAIN_DB_PREFIX . "mailing_cibles WHERE rowid=" . $obj->rowid . ")";
 									dol_syslog("card.php: set prospect thirdparty status", LOG_DEBUG);
 									$resqlx = $db->query($sqlx);
 									if (! $resqlx) {
@@ -307,7 +309,7 @@ if ($resql) {
 									}
 
 									// Update status communication of contact prospect
-									$sqlx = "UPDATE " . MAIN_DB_PREFIX . "societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM " . MAIN_DB_PREFIX . "socpeople AS sc INNER JOIN " . MAIN_DB_PREFIX . "mailing_cibles AS mc ON mc.rowid=" . $obj->rowid . " AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
+									$sqlx = UPD . MAIN_DB_PREFIX . "societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM " . MAIN_DB_PREFIX . "socpeople AS sc INNER JOIN " . MAIN_DB_PREFIX . "mailing_cibles AS mc ON mc.rowid=" . $obj->rowid . " AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
 									dol_syslog("card.php: set prospect contact status", LOG_DEBUG);
 
 									$resqlx = $db->query($sqlx);
@@ -346,14 +348,14 @@ if ($resql) {
 
 				// Loop finished, set global statut of mail
 				$statut = 2;
-				if (! $nbko)
+				if (! $nbko){
 					$statut = 3;
-
-				$sqlenddate = "UPDATE " . MAIN_DB_PREFIX . "mailing SET statut=" . $statut . " WHERE rowid=" . $id;
+				
+				$sqlenddate = UPD . MAIN_DB_PREFIX . "mailing SET statut=" . $statut . WRERO . $id;
 
 				dol_syslog("update global status", LOG_DEBUG);
 				print "Update status of emailing id " . $id . " to " . $statut . "\n";
-				$resqlenddate = $db->query($sqlenddate);
+				$resqlenddate = $db->query($sqlenddate); }
 				if (! $resqlenddate) {
 					dol_print_error($db);
 					$error ++;
