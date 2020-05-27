@@ -310,7 +310,7 @@ class Ldap
 	 */
     public function bind()
 	{
-		if (! $this->result=@ldap_bind($this->connection))
+		if (! $this->result=ldap_bind($ldapconn, $ldaprdn, $ldappass))
 		{
 			$this->ldapErrorCode = ldap_errno($this->connection);
 			$this->ldapErrorText = ldap_error($this->connection);
@@ -437,7 +437,7 @@ class Ldap
 
 		$this->dump($dn, $info);
 
-		//print_r($info);
+		
 		$result=@ldap_add($this->connection, $dn, $info);
 
 		if ($result)
@@ -491,7 +491,7 @@ class Ldap
 
 		$this->dump($dn, $info);
 
-		//print_r($info);
+		
 		$result=@ldap_modify($this->connection, $dn, $info);
 
 		if ($result)
@@ -541,7 +541,7 @@ class Ldap
 		$newrdn=$this->convFromOutputCharset($newrdn, $this->ldapcharset);
 		$newparent=$this->convFromOutputCharset($newparent, $this->ldapcharset);
 
-		//print_r($info);
+		
 		$result=@ldap_rename($this->connection, $dn, $newrdn, $newparent, $deleteoldrdn);
 
 		if ($result)
@@ -603,7 +603,7 @@ class Ldap
 		}
 		else
 		{
-			//$result = $this->delete($olddn);
+			
 			$result = $this->add($dn, $info, $user);	// If record has been deleted from LDAP, we recreate it. We ignore error if it already exists.
 			$result = $this->modify($dn, $info, $user);	// We use add/modify instead of delete/add when olddn is received
 		}
@@ -611,7 +611,7 @@ class Ldap
 		{
 			$this->error = ldap_error($this->connection).' (Code '.ldap_errno($this->connection).") ".$this->error;
 			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
-			//print_r($info);
+			
 			return -1;
 		}
 		else
@@ -798,7 +798,7 @@ class Ldap
 
 		$this->dump($dn, $info);
 
-		//print_r($info);
+		
 		$result=@ldap_mod_add($this->connection, $dn, $info);
 
 		if ($result)
@@ -850,7 +850,7 @@ class Ldap
 
 		$this->dump($dn, $info);
 
-		//print_r($info);
+		
 		$result=@ldap_mod_replace($this->connection, $dn, $info);
 
 		if ($result)
@@ -902,7 +902,7 @@ class Ldap
 
 		$this->dump($dn, $info);
 
-		//print_r($info);
+		
 		$result=@ldap_mod_del($this->connection, $dn, $info);
 
 		if ($result)
@@ -979,7 +979,7 @@ class Ldap
 		$this->result = @ldap_search($this->connection, $this->people, $filterrecord, $attributes);
 
 		// Pourquoi cette ligne ?
-		//$info = ldap_get_entries($this->connection, $this->result);
+		
 
 		// Only one entry should ever be returned (no user will have the same uid)
 		$entry = ldap_first_entry($this->connection, $this->result);
@@ -1054,7 +1054,7 @@ class Ldap
 			// Return list with required fields
 			$attributeArray=array_values($attributeArray);	// This is to force to have index reordered from 0 (not make ldap_search fails)
 			dol_syslog(get_class($this)."::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter. " attributeArray=(".join(',', $attributeArray).")");
-			//var_dump($attributeArray);
+			
 			$this->result = @ldap_search($this->connection, $userDn, $filter, $attributeArray);
 		}
 		else
@@ -1073,14 +1073,14 @@ class Ldap
 
 		// Warning: Dans info, les noms d'attributs sont en minuscule meme si passe
 		// a ldap_search en majuscule !!!
-		//print_r($info);
+		
 
 		for ($i = 0; $i < $info["count"]; $i++)
 		{
 			$recordid=$this->convToOutputCharset($info[$i][$useridentifier][0], $this->ldapcharset);
 			if ($recordid)
 			{
-				//print "Found record with key $useridentifier=".$recordid."<br>\n";
+				
 				$fulllist[$recordid][$useridentifier]=$recordid;
 
 				// Add to the array for each attribute in my list
@@ -1088,7 +1088,7 @@ class Ldap
 				for ($j = 0; $j < $num; $j++)
 				{
 					$keyattributelower=strtolower($attributeArray[$j]);
-					//print " Param ".$attributeArray[$j]."=".$info[$i][$keyattributelower][0]."<br>\n";
+					
 
 					//permet de recuperer le SID avec Active Directory
 					if ($this->serverType == "activedirectory" && $keyattributelower == "objectsid")
@@ -1282,7 +1282,7 @@ class Ldap
 				$result = @ldap_get_entries($this->connection, $this->result);
 				if ($result['count'] > 0) dol_syslog('Ldap::fetch search found '.$result['count'].' records');
 				else dol_syslog('Ldap::fetch search returns but found no records');
-				//var_dump($result);exit;
+				
 			}
 			else
 			{
@@ -1337,7 +1337,7 @@ class Ldap
 			$this->domainFQDN = $domain;
 
 			// Set ldapUserDn (each user can have a different dn)
-			//var_dump($result[0]);exit;
+			
 			$this->ldapUserDN=$result[0]['dn'];
 
 			ldap_free_result($this->result);
