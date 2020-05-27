@@ -40,11 +40,10 @@ if (! isset($argv[1]) || ! $argv[1]) {
 $now = $argv[1];
 
 require_once $path . "../../htdocs/master.inc.php";
-// require_once PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php";
-// require_once PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php";
+
 
 require_once PHPEXCEL_PATH . "/PHPExcel.php";
-// require_once PHPEXCEL_PATH."/PHPExcel/Writer/Excel2007.php";
+
 require_once PHPEXCEL_PATH . "/PHPExcel/Writer/Excel5.php";
 
 // Global variables
@@ -61,7 +60,6 @@ dol_syslog($script_file . " launched with arg " . join(',', $argv));
 
 $fname = DOL_DATA_ROOT . '/export-contacts.xls';
 
-// $objPHPExcel = new writeexcel_workbook($fname);
 $objPHPExcel = new PHPExcel();
 $objPHPExcel->getProperties()->setCreator("Dolibarr script");
 $objPHPExcel->getProperties()->setLastModifiedBy("Dolibarr script");
@@ -69,11 +67,11 @@ $objPHPExcel->getProperties()->setTitle("Test Document");
 $objPHPExcel->getProperties()->setSubject("Test Document");
 $objPHPExcel->getProperties()->setDescription("Test document, generated using PHP classes.");
 
-// $page = &$objPHPExcel->addworksheet('Export Dolibarr');
+
 $objPHPExcel->setActiveSheetIndex(0);
 $objPHPExcel->getActiveSheet()->setTitle('Contacts');
 
-// $page->set_column(0,4,18); // A
+
 
 $sql = "SELECT distinct c.lastname, c.firstname, c.email, s.nom as name";
 $sql .= " FROM " . MAIN_DB_PREFIX . "socpeople as c";
@@ -106,11 +104,10 @@ if ($resql) {
 	}
 }
 
-// $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+
 $objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 $objWriter->save($fname);
 
-// $objPHPExcel->close();
 
 print 'File ' . $fname . ' was generated.' . "\n";
 
