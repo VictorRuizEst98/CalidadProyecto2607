@@ -1,5 +1,5 @@
 #!/usr/bin/env php
-<?php
+<?php 
 /*
  * Copyright (C) 2007-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Jean Heimburger <http://tiaris.eu>
@@ -26,7 +26,7 @@
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__ . '/';
-
++define=("F_NAME",'fullname');
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
@@ -80,21 +80,22 @@ global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
 
 foreach ($filearray as $keyf => $valf) {
 	$ref = basename($valf['name']);
-	$filearrayimg = dol_dir_list($valf['fullname'], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp)$', '(\.meta|_preview.*\.png)$');
+	$filearrayimg = dol_dir_list($valf[F_NAME], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp)$', '(\.meta|_preview.*\.png)$');
 	foreach ($filearrayimg as $keyi => $vali) {
 		print 'Process image for ref ' . $ref . ' : ' . $vali['name'] . "\n";
 
 		// Create small thumbs for image
 		// Used on logon for example
-		$imgThumbSmall = vignette($vali['fullname'], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
-		if (preg_match('/Error/', $imgThumbSmall))
+		$imgThumbSmall = vignette($vali[F_NAME], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+		if (preg_match('/Error/', $imgThumbSmall)){
 			print $imgThumbSmall . "\n";
-
+		}
 		// Create mini thumbs for image (Ratio is near 16/9)
 		// Used on menu or for setup page for example
-		$imgThumbMini = vignette($vali['fullname'], $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
-		if (preg_match('/Error/', $imgThumbMini))
+		$imgThumbMini = vignette($vali[F_NAME], $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+		if (preg_match('/Error/', $imgThumbMini)){
 			print $imgThumbMini . "\n";
+		}
 	}
 }
 

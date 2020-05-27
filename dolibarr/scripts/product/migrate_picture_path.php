@@ -1,5 +1,5 @@
 #!/usr/bin/env php
-<?php
+<?php 
 /*
  * Copyright (C) 2007-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Jean Heimburger <http://tiaris.eu>
@@ -26,7 +26,7 @@
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__ . '/';
-
++define=("PROD",'product');
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
@@ -54,7 +54,7 @@ $forcecommit = 0;
 print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
 dol_syslog($script_file . " launched with arg " . join(',', $argv));
 
-if (! isset($argv[1]) || $argv[1] != 'product') {
+if (! isset($argv[1]) || $argv[1] != PROD) {
 	print "Usage:  $script_file product\n";
 	exit(- 1);
 }
@@ -62,10 +62,10 @@ if (! isset($argv[1]) || $argv[1] != 'product') {
 print '--- start' . "\n";
 
 // Case to migrate products path
-if ($argv[1] == 'product') {
+if ($argv[1] == PROD) {
 	$product = new Product($db);
 
-	$sql = "SELECT rowid as pid from " . MAIN_DB_PREFIX . "product"; // Get list of all products
+	$sql = "SELECT rowid as pid from " . MAIN_DB_PREFIX . PROD; // Get list of all products
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
@@ -95,7 +95,7 @@ function migrate_product_photospath($product)
 
 	$dir = $conf->product->multidir_output[$product->entity];
 	$conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO = 1;
-	$origin = $dir . '/' . get_exdir($product->id, 2, 0, 0, $product, 'product') . $product->id . "/photos";
+	$origin = $dir . '/' . get_exdir($product->id, 2, 0, 0, $product, PROD) . $product->id . "/photos";
 	$destin = $dir . '/' . dol_sanitizeFileName($product->ref);
 
 	$error = 0;
@@ -115,7 +115,7 @@ function migrate_product_photospath($product)
 						while (($thumb = readdir($thumbs)) !== false) {
 							dol_move($origin . '/' . $file . '/' . $thumb, $destin . '/' . $file . '/' . $thumb);
 						}
-						// dol_delete_dir($origin.'/'.$file);
+						
 					}
 				} else {
 					if (dol_is_file($origin . '/' . $file)) {
