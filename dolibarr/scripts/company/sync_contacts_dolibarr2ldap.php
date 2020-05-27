@@ -57,8 +57,9 @@ if (! isset($argv[1]) || ! $argv[1]) {
 }
 
 foreach ($argv as $key => $val) {
-	if (preg_match('/-y$/', $val, $reg))
+	if (preg_match('/-y$/', $val, $reg)){
 		$confirmed = 1;
+	}
 }
 
 $now = $argv[1];
@@ -91,13 +92,7 @@ if (! $confirmed) {
 	$input = trim(fgets(STDIN));
 }
 
-/*
- * if (! $conf->global->LDAP_CONTACT_ACTIVE)
- * {
- * print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
- * exit(-1);
- * }
- */
+
 
 $sql = "SELECT rowid";
 $sql .= " FROM " . MAIN_DB_PREFIX . "socpeople";
