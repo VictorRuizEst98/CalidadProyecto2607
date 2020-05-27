@@ -78,13 +78,13 @@ $sql .= " , " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 $sql .= " , " . MAIN_DB_PREFIX . "user as u";
 $sql .= " WHERE f.fk_statut = 1 AND f.paye = 0";
 $sql .= " AND f.fk_soc = s.rowid";
-if (is_numeric($duration_value))
+if (is_numeric($duration_value)){
 	$sql .= " AND f.date_lim_reglement < '" . $db->idate(dol_time_plus_duree($now, $duration_value, "d")) . "'";
+}
 $sql .= " AND sc.fk_soc = s.rowid";
 $sql .= " AND sc.fk_user = u.rowid";
 $sql .= " ORDER BY u.email ASC, s.rowid ASC, f.ref ASC"; // Order by email to allow one message per email
 
-// print $sql;
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -107,8 +107,9 @@ if ($resql) {
 				if (dol_strlen($oldemail) && $oldemail != 'none') {
 					envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative);
 				} else {
-					if ($oldemail != 'none')
+					if ($oldemail != 'none'){
 						print "- No email sent for " . $oldsalerepresentative . ", total: " . $total . "\n";
+					}
 				}
 				$oldemail = $obj->email;
 				$olduid = $obj->uid;
@@ -118,8 +119,9 @@ if ($resql) {
 				$total = 0;
 				$foundtoprocess = 0;
 				$salerepresentative = dolGetFirstLastname($obj->firstname, $obj->lastname);
-				if (empty($obj->email))
+				if (empty($obj->email)){
 					print "Warning: Sale representative " . $salerepresentative . " has no email. Notice disabled.\n";
+				}
 			}
 
 			// Define line content
@@ -135,10 +137,11 @@ if ($resql) {
 				$foundtoprocess ++;
 			}
 			print "Unpaid invoice " . $obj->ref . ", price " . price2num($obj->total_ttc) . ", due date " . dol_print_date($db->jdate($obj->due_date), 'day') . " (linked to company " . $obj->name . ", sale representative " . dolGetFirstLastname($obj->firstname, $obj->lastname) . ", email " . $obj->email . ", lang " . $outputlangs->defaultlang . "): ";
-			if (dol_strlen($obj->email))
+			if (dol_strlen($obj->email)){
 				print "qualified.";
-			else
+			}else{
 				print "disqualified (no email).";
+			}
 			print "\n";
 
 			unset($outputlangs);
@@ -153,8 +156,9 @@ if ($resql) {
 			{
 				envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative);
 			} else {
-				if ($oldemail != 'none')
+				if ($oldemail != 'none'){
 					print "- No email sent for " . $oldsalerepresentative . ", total: " . $total . "\n";
+				}
 			}
 		}
 	} else {
@@ -202,11 +206,12 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 	dol_syslog("email_unpaid_invoices_to_representatives.php: send mail to " . $oldemail);
 
 	$usehtml = 0;
-	if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER))
+	if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER)){
 		$usehtml += 1;
-	if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER))
+	}
+	if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER)){
 		$usehtml += 1;
-
+	}
 	$allmessage = '';
 	if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER)) {
 		$allmessage .= $conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER;
@@ -218,8 +223,9 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 	$allmessage .= $langs->trans("Total") . " = " . price($total, 0, $newlangs, 0, 0, - 1, $conf->currency) . ($usehtml ? "<br>\n" : "\n");
 	if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER)) {
 		$allmessage .= $conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER;
-		if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER))
+		if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER)){
 			$usehtml += 1;
+		}
 	}
 
 	$mail = new CMailFile($subject, $sendto, $from, $allmessage, array(), array(), array(), '', '', 0, $msgishtml);

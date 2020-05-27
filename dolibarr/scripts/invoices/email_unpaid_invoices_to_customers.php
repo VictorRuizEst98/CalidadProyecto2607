@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
+ 
 /**
  * \file scripts/invoices/email_unpaid_invoices_to_customers.php
  * \ingroup facture
@@ -27,6 +27,9 @@
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__ . '/';
++define=("CONF",'confirm');
++define=("CONTAC",'contacts');
++define=("NO_MAIL",NO_MAIL);
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
@@ -35,7 +38,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(- 1);
 }
 
-if (! isset($argv[2]) || ! $argv[2] || ! in_array($argv[1], array('test','confirm')) || ! in_array($argv[2], array('thirdparties','contacts'))) {
+if (! isset($argv[2]) || ! $argv[2] || ! in_array($argv[1], array('test',CONF)) || ! in_array($argv[2], array('thirdparties',CONTAC))) {
 	print "Usage: $script_file (test|confirm) (thirdparties|contacts) [delay] [after]\n";
 	print "\n";
 	print "Send an email to customers to remind all unpaid customer invoices.\n";
@@ -56,9 +59,6 @@ $langs->load('main');
 $version = DOL_VERSION;
 $error = 0;
 
-/*
- * Main
- */
 
 @set_time_limit(0);
 print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
@@ -71,30 +71,35 @@ $duration_value2 = isset($argv[4]) ? $argv[4] : 'none';
 $error = 0;
 print $script_file . " launched with mode " . $mode . " default lang=" . $langs->defaultlang . (is_numeric($duration_value) ? " delay=" . $duration_value : "") . (is_numeric($duration_value2) ? " after=" . $duration_value2 : "") . "\n";
 
-if ($mode != 'confirm')
+if ($mode != CONF){
 	$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
-
+}
 $sql = "SELECT f.ref, f.total_ttc, f.date_lim_reglement as due_date,";
 $sql .= " s.rowid as sid, s.nom as name, s.email, s.default_lang";
-if ($targettype == 'contacts')
+if ($targettype == CONTAC){
 	$sql .= ", sp.rowid as cid, sp.firstname as cfirstname, sp.lastname as clastname, sp.email as cemail";
+}
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f, " . MAIN_DB_PREFIX . "societe as s";
-if ($targettype == 'contacts')
+if ($targettype == CONTAC){
 	$sql .= ", " . MAIN_DB_PREFIX . "socpeople as sp";
+}
 $sql .= " WHERE f.fk_statut = 1 AND f.paye = 0";
 $sql .= " AND f.fk_soc = s.rowid";
-if (is_numeric($duration_value2))
+if (is_numeric($duration_value2)){
 	$sql .= " AND f.date_lim_reglement >= '" . $db->idate(dol_time_plus_duree($now, $duration_value2, "d")) . "'";
-if (is_numeric($duration_value))
+}
+if (is_numeric($duration_value)){
 	$sql .= " AND f.date_lim_reglement < '" . $db->idate(dol_time_plus_duree($now, $duration_value, "d")) . "'";
-if ($targettype == 'contacts')
+}
+if ($targettype == CONTAC){
 	$sql .= " AND s.rowid = sp.fk_soc";
+}
 $sql .= " ORDER BY";
-if ($targettype == 'contacts')
+if ($targettype == CONTAC){
 	$sql .= " sp.email, sp.rowid,";
+}
 $sql .= " s.email ASC, s.rowid ASC, f.ref ASC"; // Order by email to allow one message per email
 
-// print $sql;
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -119,13 +124,15 @@ if ($resql) {
 
 			// Check if this record is a break after previous one
 			$startbreak = false;
-			if ($newemail != $oldemail || $oldemail == 'none')
+			if ($newemail != $oldemail || $oldemail == 'none'){
 				$startbreak = true;
-			if ($obj->sid && $obj->sid != $oldsid)
+			}
+			if ($obj->sid && $obj->sid != $oldsid){
 				$startbreak = true;
-			if ($obj->cid && $obj->cid != $oldcid)
+			}
+			if ($obj->cid && $obj->cid != $oldcid){
 				$startbreak = true;
-
+			}
 			if ($startbreak) {
 				// Break onto sales representative (new email or cid)
 				if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid . '|' . $oldemail])) {
@@ -133,10 +140,11 @@ if ($resql) {
 					$trackthirdpartiessent[$oldsid . '|' . $oldemail] = 'contact id ' . $oldcid;
 				} else {
 					if ($oldemail != 'none') {
-						if (empty($trackthirdpartiessent[$oldsid . '|' . $oldemail]))
-							print "- No email sent for '" . $oldtarget . "', total: " . $total . "\n";
-						else
-							print "- No email sent for '" . $oldtarget . "', total: " . $total . " (already sent to " . $trackthirdpartiessent[$oldsid . '|' . $oldemail] . ")\n";
+						if (empty($trackthirdpartiessent[$oldsid . '|' . $oldemail])){
+							print NO_MAIL . $oldtarget . "', total: " . $total . "\n";
+						}else{
+							print NO_MAIL . $oldtarget . "', total: " . $total . " (already sent to " . $trackthirdpartiessent[$oldsid . '|' . $oldemail] . ")\n";
+						}
 					}
 				}
 				$oldemail = $newemail;
@@ -148,7 +156,7 @@ if ($resql) {
 				$total = 0;
 				$foundtoprocess = 0;
 				$target = (empty($obj->cfirstname) && empty($obj->clastname)) ? $obj->name : ($obj->clastname . " " . $obj->cfirstname);
-				// if (empty($newemail)) print "Warning: Customer ".$target." has no email. Notice disabled.\n";
+				
 			}
 
 			// Define line content
@@ -164,11 +172,11 @@ if ($resql) {
 				$foundtoprocess ++;
 			}
 			print "Unpaid invoice " . $obj->ref . ", price " . price2num($obj->total_ttc) . ", due date " . dol_print_date($db->jdate($obj->due_date), 'day') . ", customer id " . $obj->sid . " " . $obj->name . ", " . ($obj->cid ? "contact id " . $obj->cid . " " . $obj->clastname . " " . $obj->cfirstname . ", " : "") . "email " . $newemail . ", lang " . $outputlangs->defaultlang . ": ";
-			if (dol_strlen($newemail))
+			if (dol_strlen($newemail)){
 				print "qualified.";
-			else
+			}else{
 				print "disqualified (no email).";
-			print "\n";
+			}print "\n";
 
 			unset($outputlangs);
 
@@ -185,10 +193,11 @@ if ($resql) {
 				$trackthirdpartiessent[$oldsid . '|' . $oldemail] = 'contact id ' . $oldcid;
 			} else {
 				if ($oldemail != 'none') {
-					if (empty($trackthirdpartiessent[$oldsid . '|' . $oldemail]))
-						print "- No email sent for '" . $oldtarget . "', total: " . $total . "\n";
-					else
-						print "- No email sent for '" . $oldtarget . "', total: " . $total . " (already sent to " . $trackthirdpartiessent[$oldsid . '|' . $oldemail] . ")\n";
+					if (empty($trackthirdpartiessent[$oldsid . '|' . $oldemail])){
+						print NO_MAIL . $oldtarget . "', total: " . $total . "\n";
+					}else{
+						print NO_MAIL . $oldtarget . "', total: " . $total . " (already sent to " . $trackthirdpartiessent[$oldsid . '|' . $oldemail] . ")\n";
+					}
 				}
 			}
 		}
@@ -219,9 +228,9 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 {
 	global $conf, $langs;
 
-	if (getenv('DOL_FORCE_EMAIL_TO'))
+	if (getenv('DOL_FORCE_EMAIL_TO')){
 		$oldemail = getenv('DOL_FORCE_EMAIL_TO');
-
+	}
 	$newlangs = new Translate('', $conf);
 	$newlangs->setDefaultLang(empty($userlang) ? (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $userlang);
 	$newlangs->load("main");
@@ -254,8 +263,9 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 	$allmessage .= $langs->trans("Total") . " = " . price($total, 0, $userlang, 0, 0, - 1, $conf->currency) . ($usehtml ? "<br>\n" : "\n");
 	if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER)) {
 		$allmessage .= $conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER;
-		if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER))
+		if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER)){
 			$usehtml += 1;
+		}
 	}
 
 	$mail = new CMailFile($subject, $sendto, $from, $allmessage, array(), array(), array(), '', '', 0, $msgishtml);
@@ -263,7 +273,7 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 	$mail->errors_to = $errorsto;
 
 	// Send or not email
-	if ($mode == 'confirm') {
+	if ($mode == CONF) {
 		$result = $mail->sendfile();
 		if (! $result) {
 			print "Error sending email " . $mail->error . "\n";
