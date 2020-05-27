@@ -1,5 +1,5 @@
 #!/usr/bin/env php
-<?php
+<?php 
 /* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
@@ -24,7 +24,7 @@
  * \ingroup		Accounting Expert
  * \brief		Page to detect empty accounting account
  */
-
++define("MTH",'month')
 require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -32,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array("companies", "compta", "main", "accountancy"));
 
 // Security check
-if (!$user->admin)
+if (!$user->admin){
     accessforbidden();
-
+}
 // Date range
 $year = GETPOST("year");
 if (empty($year)) {
@@ -56,21 +56,23 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	if ($q == 0) {
 		// We define date_start and date_end
 		$year_end = $year_start;
-		$month_start = GETPOST("month") ? GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
-		if (!GETPOST('month')) {
+		$month_start = GETPOST(MTH) ? GETPOST(MTH) : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		if (!GETPOST(MTH)) {
 			if (!GETPOST("year") && $month_start > $month_current) {
 				$year_start--;
 				$year_end--;
 			}
 			$month_end = $month_start - 1;
-			if ($month_end < 1)
+			if ($month_end < 1){
 				$month_end = 12;
-			else
+			}else{
 				$year_end++;
-		} else
+			}	
+		} else{
 			$month_end = $month_start;
 		$date_start = dol_get_first_day($year_start, $month_start, false);
 		$date_end = dol_get_last_day($year_end, $month_end, false);
+		}
 	}
 	if ($q == 1) {
 		$date_start = dol_get_first_day($year_start, 1, false);
@@ -88,7 +90,6 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 		$date_start = dol_get_first_day($year_start, 10, false);
 		$date_end = dol_get_last_day($year_start, 12, false);
 	}
-} else {
 }
 
 llxHeader();
@@ -126,11 +127,13 @@ $sql .= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= ", ".MAIN_DB_PREFIX."c_country as cp";
 $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= " AND s.fk_pays = cp.rowid";
-if (!empty($date_start) && !empty($date_end))
+if (!empty($date_start) && !empty($date_end)){
 	$sql .= " AND f.datec >= '".$db->idate($date_start)."' AND f.datec <= '".$db->idate($date_end)."'";
+}
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).")";
-if ($socid)
+if ($socid){
 	$sql .= " AND f.fk_soc = ".$socid;
+}
 $sql .= " GROUP BY name";
 $sql .= ")";
 $sql .= "UNION (SELECT s.rowid, s.nom as name , s.address, s.zip , s.town, s.code_compta_fournisseur as compta , ";
@@ -140,11 +143,13 @@ $sql .= ", ".MAIN_DB_PREFIX."facture_fourn as ff";
 $sql .= ", ".MAIN_DB_PREFIX."c_country as cp";
 $sql .= " WHERE ff.fk_soc = s.rowid";
 $sql .= " AND s.fk_pays = cp.rowid";
-if (!empty($date_start) && !empty($date_end))
+if (!empty($date_start) && !empty($date_end)){
 	$sql .= " AND ff.datec >= '".$db->idate($date_start)."' AND ff.datec <= '".$db->idate($date_end)."'";
+}
 $sql .= " AND ff.entity = ".$conf->entity;
-if ($socid)
+if ($socid){
 	$sql .= " AND f.fk_soc = ".$socid;
+}
 $sql .= " GROUP BY name";
 $sql .= ")";
 
