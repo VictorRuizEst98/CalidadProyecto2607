@@ -29,8 +29,8 @@ $path = __DIR__ . '/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+    echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
+    exit(- 1);
 }
 
 require_once $path . "../../htdocs/master.inc.php";
@@ -51,6 +51,7 @@ $error = 0;
 print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
 dol_syslog($script_file . " launched with arg " . join(',', $argv));
 
+
 $datetimeprev = dol_now();
 
 $month = strftime("%m", $datetimeprev);
@@ -67,7 +68,6 @@ if (! isset($argv[1])) { // Check parameters
 }
 
 $withdrawreceipt = new BonPrelevement($db);
-// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
 $result = $withdrawreceipt->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $argv[1]);
 
 $db->close();
